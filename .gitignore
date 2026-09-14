@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+*.wav.venv/
+.venv/
+*.wav
+venv/
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+.git/
+.pytest_cache/
+Notes.txt
