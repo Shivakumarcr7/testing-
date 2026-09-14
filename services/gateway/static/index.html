@@ -3,45 +3,160 @@
 
 <head>
 
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0"
 />
 
-<title>Zenvy Hospital Voice Assistant</title>
-
+<title>Zenvy — AI Hospital Assistant</title>
 
 <style>
 
+/* =========================================================
+   ZENVY PREMIUM UI
+   ========================================================= */
+
+:root {
+  --bg: #070a13;
+  --bg2: #0d1020;
+  --card: rgba(18, 23, 42, 0.72);
+  --card-hover: rgba(24, 30, 53, 0.82);
+
+  --text: #f7f8ff;
+  --muted: #9ba3bb;
+
+  --purple: #8b5cf6;
+  --purple-light: #a78bfa;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --red: #fb7185;
+
+  --border: rgba(255,255,255,0.09);
+
+  --shadow:
+    0 25px 70px rgba(0,0,0,0.35);
+
+  --radius: 22px;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
 
+  margin: 0;
+
+  min-height: 100vh;
+
   font-family:
+    Inter,
+    ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
 
-  max-width: 560px;
+  color: var(--text);
 
-  margin: 50px auto;
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(139,92,246,0.20),
+      transparent 30%
+    ),
 
-  padding: 0 20px;
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(34,211,238,0.12),
+      transparent 28%
+    ),
 
-  color: #1a1a1a;
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(139,92,246,0.10),
+      transparent 35%
+    ),
+
+    linear-gradient(
+      135deg,
+      #060812 0%,
+      #0b0f1d 50%,
+      #070914 100%
+    );
+
+  padding:
+    35px
+    18px
+    70px;
+}
+
+
+/* =========================================================
+   MAIN WIDTH
+   ========================================================= */
+
+body > * {
+
+  width: 100%;
+
+  max-width: 850px;
+
+  margin-left: auto;
+  margin-right: auto;
 
 }
 
 
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 h1 {
+
+  position: relative;
 
   text-align: center;
 
-  font-size: 1.5rem;
+  margin:
+    15px
+    auto
+    8px;
 
-  margin-bottom: 5px;
+  font-size:
+    clamp(2rem, 5vw, 3.2rem);
+
+  font-weight: 800;
+
+  letter-spacing: -1.8px;
+
+  line-height: 1.05;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ffffff,
+      #c4b5fd,
+      #67e8f9
+    );
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
 
 }
 
@@ -50,297 +165,114 @@ h1 {
 
   text-align: center;
 
-  color: #666;
+  color: var(--muted);
 
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 
-  margin-top: 0;
+  margin:
+    0
+    0
+    22px;
+
+  letter-spacing: 0.2px;
 
 }
 
 
+/* =========================================================
+   CARDS
+   ========================================================= */
+
 .card {
 
-  margin-top: 25px;
+  position: relative;
 
-  padding: 20px;
+  margin-top: 20px;
 
-  border: 1px solid #e2e8f0;
+  padding: 27px;
 
-  border-radius: 12px;
+  border:
+    1px solid var(--border);
 
-  background: #f9fafb;
+  border-radius:
+    var(--radius);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20,25,45,0.82),
+      rgba(11,15,29,0.70)
+    );
+
+  box-shadow:
+    var(--shadow);
+
+  backdrop-filter:
+    blur(22px);
+
+  -webkit-backdrop-filter:
+    blur(22px);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+
+}
+
+
+.card::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: -100px;
+  right: -100px;
+
+  width: 220px;
+  height: 220px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(139,92,246,0.12),
+      transparent 70%
+    );
+
+  pointer-events: none;
+
+}
+
+
+.card:hover {
+
+  border-color:
+    rgba(167,139,250,0.22);
+
+  background:
+    var(--card-hover);
 
 }
 
 
 .card h2 {
 
-  margin-top: 0;
-
-  font-size: 1.1rem;
-
-}
-
-
-#talkBtn {
-
-  display: block;
-
-  width: 140px;
-
-  height: 140px;
-
-  margin: 20px auto;
-
-  border-radius: 50%;
-
-  border: none;
-
-  font-size: 1rem;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  background: #2b6cb0;
-
-  color: white;
-
-}
-
-
-#talkBtn.recording {
-
-  background: #c53030;
-
-}
-
-
-#talkBtn:disabled {
-
-  background: #a0aec0;
-
-  cursor: not-allowed;
-
-}
-
-
-#status {
-
-  text-align: center;
-
-  margin-top: 15px;
-
-  min-height: 24px;
-
-  color: #444;
-
-}
-
-
-textarea {
-
-  width: 100%;
-
-  box-sizing: border-box;
-
-  min-height: 100px;
-
-  padding: 12px;
-
-  border: 1px solid #cbd5e0;
-
-  border-radius: 8px;
-
-  resize: vertical;
-
-  font-family: inherit;
-
-  font-size: 1rem;
-
-}
-
-
-.controls {
-
-  display: flex;
-
-  gap: 10px;
-
-  margin-top: 12px;
-
-}
-
-
-select,
-.button {
-
-  padding: 10px 12px;
-
-  border-radius: 8px;
-
-  border: 1px solid #cbd5e0;
-
-  font-size: 0.95rem;
-
-}
-
-
-select {
-
-  flex: 1;
-
-  background: white;
-
-}
-
-
-.button {
-
-  background: #2f855a;
-
-  color: white;
-
-  border: none;
-
-  cursor: pointer;
-
-  font-weight: 600;
-
-}
-
-
-.button:hover {
-
-  background: #276749;
-
-}
-
-
-.button:disabled {
-
-  background: #a0aec0;
-
-  cursor: not-allowed;
-
-}
-
-
-.turn {
-
-  text-align: left;
-
-  margin-top: 24px;
-
-  padding: 12px 16px;
-
-  border: 1px solid #e2e8f0;
-
-  border-radius: 8px;
-
-  background: #f9fafb;
-
-}
-
-
-.turn .label {
-
-  font-size: 0.75rem;
-
-  text-transform: uppercase;
-
-  color: #888;
-
-}
-
-
-.turn .text {
-
-  margin: 4px 0 10px 0;
-
-}
-
-
-.status {
-
-  margin-top: 10px;
-
-  color: #666;
-
-  font-size: 0.9rem;
-
-}
-
-
-.assistant-answer {
-
-  margin-top: 15px;
-
-  padding: 15px;
-
-  border-radius: 8px;
-
-  background: #edf7ed;
-
-  border: 1px solid #c6e6c6;
-
-}
-
-
-.assistant-answer .label {
-
-  font-size: 0.75rem;
-
-  text-transform: uppercase;
-
-  color: #2f855a;
+  margin:
+    0
+    0
+    7px;
+
+  font-size:
+    1.25rem;
 
   font-weight: 700;
 
-}
-
-
-.assistant-answer .answer-text {
-
-  margin-top: 8px;
-
-  line-height: 1.5;
-
-  white-space: pre-wrap;
-
-}
-
-
-.input-display {
-
-  margin-top: 15px;
-
-  padding: 12px;
-
-  border-radius: 8px;
-
-  background: #f1f5f9;
-
-  border: 1px solid #e2e8f0;
-
-}
-
-
-.input-display .label {
-
-  font-size: 0.75rem;
-
-  text-transform: uppercase;
-
-  color: #888;
-
-}
-
-
-.input-display .text {
-
-  margin-top: 5px;
+  letter-spacing: -0.3px;
 
 }
 
@@ -349,23 +281,91 @@ select {
    LOGIN
    ========================================================= */
 
+#loginView {
+
+  max-width: 520px;
+
+  margin:
+    35px
+    auto
+    0;
+
+}
+
+
+#loginView h2 {
+
+  text-align: center;
+
+}
+
+
+#loginView .sub {
+
+  margin-bottom: 22px;
+
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
 input[type="tel"] {
 
   width: 100%;
 
-  box-sizing: border-box;
+  padding:
+    15px
+    17px;
 
-  padding: 12px;
+  border:
+    1px solid var(--border);
 
-  border: 1px solid #cbd5e0;
+  border-radius:
+    14px;
 
-  border-radius: 8px;
+  outline: none;
 
-  font-family: inherit;
+  background:
+    rgba(5,8,18,0.72);
 
-  font-size: 1rem;
+  color:
+    var(--text);
 
-  letter-spacing: 1px;
+  font-family:
+    inherit;
+
+  font-size:
+    1rem;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+}
+
+
+input[type="tel"]::placeholder {
+
+  color:
+    #697189;
+
+}
+
+
+input[type="tel"]:focus {
+
+  border-color:
+    rgba(139,92,246,0.75);
+
+  box-shadow:
+    0 0 0 4px
+    rgba(139,92,246,0.10);
+
+  background:
+    rgba(8,11,23,0.9);
 
 }
 
@@ -374,58 +374,967 @@ input[type="tel"] {
 
   width: 100%;
 
-  margin-top: 12px;
+  margin-top: 13px;
 
 }
 
 
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.button {
+
+  border: none;
+
+  border-radius:
+    13px;
+
+  padding:
+    13px
+    20px;
+
+  font-family:
+    inherit;
+
+  font-size:
+    0.95rem;
+
+  font-weight:
+    700;
+
+  color:
+    white;
+
+  cursor:
+    pointer;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7c3aed,
+      #8b5cf6
+    );
+
+  box-shadow:
+    0 10px 28px
+    rgba(124,58,237,0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+
+}
+
+
+.button:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 15px 35px
+    rgba(124,58,237,0.35);
+
+}
+
+
+.button:active {
+
+  transform:
+    translateY(0);
+
+}
+
+
+.button:disabled {
+
+  opacity:
+    0.45;
+
+  cursor:
+    not-allowed;
+
+  transform:
+    none;
+
+}
+
+
+/* =========================================================
+   SIGNED IN BAR
+   ========================================================= */
+
 .signed-in-bar {
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
-  gap: 10px;
+  gap:
+    15px;
 
-  margin-top: 25px;
+  margin-top:
+    20px;
 
-  padding: 10px 14px;
+  padding:
+    12px
+    16px;
 
-  border: 1px solid #e2e8f0;
+  border:
+    1px solid var(--border);
 
-  border-radius: 8px;
+  border-radius:
+    14px;
 
-  background: #f9fafb;
+  background:
+    rgba(18,23,42,0.65);
 
-  font-size: 0.85rem;
+  color:
+    var(--muted);
 
-  color: #444;
+  font-size:
+    0.88rem;
+
+  backdrop-filter:
+    blur(15px);
+
+}
+
+
+.signed-in-bar strong {
+
+  color:
+    var(--text);
 
 }
 
 
 .link-button {
 
-  background: none;
-
   border: none;
 
-  padding: 0;
+  background: transparent;
 
-  color: #2b6cb0;
+  padding: 4px;
 
-  font-family: inherit;
+  color:
+    #a78bfa;
 
-  font-size: 0.85rem;
+  font-family:
+    inherit;
 
-  text-decoration: underline;
+  font-size:
+    0.85rem;
 
-  cursor: pointer;
+  font-weight:
+    600;
+
+  cursor:
+    pointer;
+
+  transition:
+    color 0.2s ease;
 
 }
 
+
+.link-button:hover {
+
+  color:
+    #c4b5fd;
+
+}
+
+
+/* =========================================================
+   VOICE ASSISTANT
+   ========================================================= */
+
+#appView {
+
+  animation:
+    fadeIn 0.5s ease;
+
+}
+
+
+#talkBtn {
+
+  position: relative;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    190px;
+
+  height:
+    190px;
+
+  margin:
+    35px
+    auto
+    28px;
+
+  border:
+    1px solid
+    rgba(167,139,250,0.25);
+
+  border-radius:
+    50%;
+
+  color:
+    white;
+
+  font-family:
+    inherit;
+
+  font-size:
+    1rem;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.2px;
+
+  cursor:
+    pointer;
+
+  background:
+
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255,255,255,0.16),
+      transparent 28%
+    ),
+
+    linear-gradient(
+      145deg,
+      #7c3aed,
+      #5b21b6
+    );
+
+  box-shadow:
+
+    0 0 0 12px
+    rgba(139,92,246,0.05),
+
+    0 0 55px
+    rgba(139,92,246,0.35),
+
+    0 25px 55px
+    rgba(0,0,0,0.45);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+}
+
+
+#talkBtn::before {
+
+  content: "🎙";
+
+  position: absolute;
+
+  top:
+    28px;
+
+  font-size:
+    2rem;
+
+  opacity:
+    0.95;
+
+}
+
+
+#talkBtn:hover {
+
+  transform:
+    scale(1.035);
+
+  box-shadow:
+
+    0 0 0 15px
+    rgba(139,92,246,0.05),
+
+    0 0 75px
+    rgba(139,92,246,0.45),
+
+    0 30px 65px
+    rgba(0,0,0,0.5);
+
+}
+
+
+#talkBtn.recording {
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255,255,255,0.15),
+      transparent 28%
+    ),
+
+    linear-gradient(
+      145deg,
+      #e11d48,
+      #9f1239
+    );
+
+  box-shadow:
+
+    0 0 0 15px
+    rgba(244,63,94,0.08),
+
+    0 0 70px
+    rgba(244,63,94,0.55),
+
+    0 25px 60px
+    rgba(0,0,0,0.5);
+
+  animation:
+    recordingPulse 1.35s infinite;
+
+}
+
+
+#talkBtn:disabled {
+
+  opacity:
+    0.55;
+
+  cursor:
+    not-allowed;
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+#status {
+
+  text-align:
+    center;
+
+  min-height:
+    26px;
+
+  margin:
+    4px
+    0
+    10px;
+
+  color:
+    #b9c0d4;
+
+  font-size:
+    0.92rem;
+
+}
+
+
+#status::before {
+
+  content:
+    "●";
+
+  margin-right:
+    7px;
+
+  color:
+    var(--green);
+
+  font-size:
+    0.65rem;
+
+}
+
+
+/* =========================================================
+   VOICE CONVERSATION
+   ========================================================= */
+
+.turn {
+
+  margin-top:
+    18px;
+
+  padding:
+    17px
+    18px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    16px;
+
+  background:
+    rgba(7,10,20,0.55);
+
+  animation:
+    slideUp 0.3s ease;
+
+}
+
+
+.turn .label {
+
+  font-size:
+    0.68rem;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.9px;
+
+  color:
+    #8e98b1;
+
+  font-weight:
+    700;
+
+}
+
+
+.turn .text {
+
+  margin:
+    6px
+    0
+    14px;
+
+  color:
+    #eef0f8;
+
+  line-height:
+    1.6;
+
+}
+
+
+/* =========================================================
+   ASK ZENVY
+   ========================================================= */
+
+textarea {
+
+  width:
+    100%;
+
+  min-height:
+    125px;
+
+  padding:
+    16px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    15px;
+
+  resize:
+    vertical;
+
+  outline:
+    none;
+
+  color:
+    var(--text);
+
+  background:
+    rgba(5,8,18,0.65);
+
+  font-family:
+    inherit;
+
+  font-size:
+    0.98rem;
+
+  line-height:
+    1.5;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+
+
+textarea::placeholder {
+
+  color:
+    #697189;
+
+}
+
+
+textarea:focus {
+
+  border-color:
+    rgba(34,211,238,0.55);
+
+  box-shadow:
+    0 0 0 4px
+    rgba(34,211,238,0.07);
+
+}
+
+
+.controls {
+
+  display:
+    flex;
+
+  gap:
+    10px;
+
+  margin-top:
+    12px;
+
+}
+
+
+select {
+
+  flex:
+    1;
+
+  min-width:
+    0;
+
+  padding:
+    13px
+    14px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    13px;
+
+  outline:
+    none;
+
+  color:
+    var(--text);
+
+  background:
+    rgba(5,8,18,0.75);
+
+  font-family:
+    inherit;
+
+  cursor:
+    pointer;
+
+}
+
+
+select option {
+
+  background:
+    #111528;
+
+  color:
+    white;
+
+}
+
+
+.controls .button {
+
+  min-width:
+    130px;
+
+}
+
+
+/* =========================================================
+   ASK STATUS
+   ========================================================= */
+
+.status {
+
+  margin-top:
+    12px;
+
+  color:
+    #858fa8;
+
+  font-size:
+    0.84rem;
+
+}
+
+
+/* =========================================================
+   USER QUESTION
+   ========================================================= */
+
+.input-display {
+
+  margin-top:
+    17px;
+
+  padding:
+    16px;
+
+  border:
+    1px solid
+    rgba(34,211,238,0.12);
+
+  border-radius:
+    15px;
+
+  background:
+    rgba(34,211,238,0.035);
+
+}
+
+
+.input-display .label {
+
+  font-size:
+    0.68rem;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.9px;
+
+  color:
+    #67e8f9;
+
+  font-weight:
+    700;
+
+}
+
+
+.input-display .text {
+
+  margin-top:
+    7px;
+
+  color:
+    #e5e7eb;
+
+  line-height:
+    1.55;
+
+}
+
+
+/* =========================================================
+   ASSISTANT ANSWER
+   ========================================================= */
+
+.assistant-answer {
+
+  margin-top:
+    14px;
+
+  padding:
+    18px;
+
+  border:
+    1px solid
+    rgba(139,92,246,0.20);
+
+  border-radius:
+    16px;
+
+  background:
+
+    linear-gradient(
+      145deg,
+      rgba(139,92,246,0.10),
+      rgba(34,211,238,0.035)
+    );
+
+  box-shadow:
+    0 15px 35px
+    rgba(0,0,0,0.18);
+
+}
+
+
+.assistant-answer .label {
+
+  font-size:
+    0.68rem;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.9px;
+
+  color:
+    #a78bfa;
+
+  font-weight:
+    800;
+
+}
+
+
+.assistant-answer .answer-text {
+
+  margin-top:
+    9px;
+
+  color:
+    #f1f3fa;
+
+  line-height:
+    1.65;
+
+  white-space:
+    pre-wrap;
+
+}
+
+
+/* =========================================================
+   LOGIN STATUS
+   ========================================================= */
+
+#loginStatus {
+
+  text-align:
+    center;
+
+  color:
+    #fb7185;
+
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes recordingPulse {
+
+  0% {
+
+    transform:
+      scale(1);
+
+  }
+
+  50% {
+
+    transform:
+      scale(1.035);
+
+  }
+
+  100% {
+
+    transform:
+      scale(1);
+
+  }
+
+}
+
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity:
+      0;
+
+    transform:
+      translateY(12px);
+
+  }
+
+  to {
+
+    opacity:
+      1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+
+@keyframes slideUp {
+
+  from {
+
+    opacity:
+      0;
+
+    transform:
+      translateY(10px);
+
+  }
+
+  to {
+
+    opacity:
+      1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+
+  width:
+    8px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+  background:
+    #080b14;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    #292f46;
+
+  border-radius:
+    10px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+  background:
+    #3d4563;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  body {
+
+    padding:
+      22px
+      12px
+      50px;
+
+  }
+
+
+  h1 {
+
+    font-size:
+      2rem;
+
+    letter-spacing:
+      -1px;
+
+  }
+
+
+  .card {
+
+    padding:
+      20px;
+
+    border-radius:
+      18px;
+
+  }
+
+
+  #talkBtn {
+
+    width:
+      165px;
+
+    height:
+      165px;
+
+    margin:
+      30px
+      auto
+      25px;
+
+  }
+
+
+  .controls {
+
+    flex-direction:
+      column;
+
+  }
+
+
+  select,
+  .controls .button {
+
+    width:
+      100%;
+
+    min-width:
+      100%;
+
+  }
+
+
+  .signed-in-bar {
+
+    align-items:
+      flex-start;
+
+  }
+
+}
 
 </style>
 
@@ -436,14 +1345,16 @@ input[type="tel"] {
 
 
 <h1>
-  🏥 Zenvy Hospital Voice Assistant
+  🏥 Zenvy
 </h1>
 
-
 <p class="sub">
-  Kannada · Hindi · English
+  AI-Powered Hospital Voice Assistant
+  <br>
+  <span style="font-size:0.82rem;">
+    Kannada · Hindi · English
+  </span>
 </p>
-
 
 
 <!-- =====================================================
@@ -460,11 +1371,9 @@ input[type="tel"] {
     🔐 Patient Login
   </h2>
 
-
   <p class="sub">
     Enter your phone number to continue
   </p>
-
 
   <form id="loginForm">
 
@@ -474,8 +1383,7 @@ input[type="tel"] {
       inputmode="numeric"
       autocomplete="tel"
       placeholder="10-digit mobile number"
-    />
-
+    >
 
     <button
       class="button"
@@ -487,7 +1395,6 @@ input[type="tel"] {
 
   </form>
 
-
   <div
     id="loginStatus"
     class="status"
@@ -496,9 +1403,8 @@ input[type="tel"] {
 </div>
 
 
-
 <!-- =====================================================
-     ASSISTANT (hidden until signed in)
+     APP
      ===================================================== -->
 
 <div
@@ -507,11 +1413,18 @@ input[type="tel"] {
 >
 
 
+  <!-- =====================================================
+       SIGNED IN
+       ===================================================== -->
+
   <div class="signed-in-bar">
 
     <span>
-      Signed in as
+
+      🟢 Signed in as
+
       <strong id="signedInPhone"></strong>
+
     </span>
 
     <button
@@ -525,146 +1438,132 @@ input[type="tel"] {
   </div>
 
 
+  <!-- =====================================================
+       VOICE ASSISTANT
+       ===================================================== -->
 
-<!-- =====================================================
-     VOICE ASSISTANT
-     ===================================================== -->
+  <div class="card">
 
-<div class="card">
+    <h2>
+      🎙️ Talk to Zenvy
+    </h2>
 
-  <h2>
-    🎙️ Voice Assistant
-  </h2>
+    <p class="sub">
+      Press and hold the button to speak
+    </p>
 
-  <p class="sub">
-    Press and hold to speak
-  </p>
-
-
-  <button id="talkBtn">
-    Hold to talk
-  </button>
-
-
-  <div id="status">
-    Ready
-  </div>
-
-
-  <div id="log"></div>
-
-</div>
-
-
-
-<!-- =====================================================
-     ASK ZENVY
-     ===================================================== -->
-
-<div class="card">
-
-  <h2>
-    🤖 Ask Zenvy
-  </h2>
-
-
-  <p class="sub">
-    Type your problem and Zenvy will generate an answer
-  </p>
-
-
-  <textarea
-    id="askText"
-    placeholder="Example: What are the OPD timings?"
-  ></textarea>
-
-
-  <div class="controls">
-
-
-    <select id="askLanguage">
-
-      <option value="en">
-        English
-      </option>
-
-      <option value="hi">
-        Hindi
-      </option>
-
-      <option value="kn">
-        Kannada
-      </option>
-
-    </select>
-
-
-    <button
-      class="button"
-      id="askButton"
-    >
-      Ask Zenvy
+    <button id="talkBtn">
+      Hold to talk
     </button>
 
-
-  </div>
-
-
-  <div
-    id="askStatus"
-    class="status"
-  >
-    Ready
-  </div>
-
-
-
-  <!-- USER INPUT -->
-
-  <div
-    id="userQuestion"
-    class="input-display"
-    style="display:none;"
-  >
-
-    <div class="label">
-      Your Question
+    <div id="status">
+      Ready
     </div>
 
-    <div
-      id="userQuestionText"
-      class="text"
-    ></div>
+    <div id="log"></div>
 
   </div>
 
 
+  <!-- =====================================================
+       ASK ZENVY
+       ===================================================== -->
 
-  <!-- ASSISTANT ANSWER -->
+  <div class="card">
 
-  <div
-    id="assistantAnswer"
-    class="assistant-answer"
-    style="display:none;"
-  >
+    <h2>
+      ✨ Ask Zenvy
+    </h2>
 
-    <div class="label">
-      Zenvy's Answer
+    <p class="sub">
+      Type your question and let Zenvy help you
+    </p>
+
+    <textarea
+      id="askText"
+      placeholder="Example: What are the OPD timings?"
+    ></textarea>
+
+
+    <div class="controls">
+
+      <select id="askLanguage">
+
+        <option value="en">
+          English
+        </option>
+
+        <option value="hi">
+          Hindi
+        </option>
+
+        <option value="kn">
+          Kannada
+        </option>
+
+      </select>
+
+
+      <button
+        class="button"
+        id="askButton"
+      >
+        Ask Zenvy
+      </button>
+
     </div>
 
+
     <div
-      id="assistantAnswerText"
-      class="answer-text"
-    ></div>
+      id="askStatus"
+      class="status"
+    >
+      Ready
+    </div>
+
+
+    <!-- USER QUESTION -->
+
+    <div
+      id="userQuestion"
+      class="input-display"
+      style="display:none;"
+    >
+
+      <div class="label">
+        Your Question
+      </div>
+
+      <div
+        id="userQuestionText"
+        class="text"
+      ></div>
+
+    </div>
+
+
+    <!-- ASSISTANT ANSWER -->
+
+    <div
+      id="assistantAnswer"
+      class="assistant-answer"
+      style="display:none;"
+    >
+
+      <div class="label">
+        Zenvy's Answer
+      </div>
+
+      <div
+        id="assistantAnswerText"
+        class="answer-text"
+      ></div>
+
+    </div>
 
   </div>
 
 </div>
-
-
-</div>
-<!-- end #appView -->
-
 
 
 <script>
@@ -677,105 +1576,73 @@ input[type="tel"] {
 let currentSessionId = null;
 
 
-
 /* =========================================================
    LOGIN
-
-   Phone-number-only gate. A number Team C has not seen
-   before is registered on first use, so there is no separate
-   signup screen and no password anywhere.
-
-   NOTE: this hides the UI, it does not secure the API. The
-   /channels/web/* endpoints remain callable directly.
    ========================================================= */
 
 const AUTH_STORAGE_KEY = "zenvy_auth";
 
 
 const loginView =
-  document.getElementById(
-    "loginView"
-  );
+  document.getElementById("loginView");
 
 
 const appView =
-  document.getElementById(
-    "appView"
-  );
+  document.getElementById("appView");
 
 
 const loginForm =
-  document.getElementById(
-    "loginForm"
-  );
+  document.getElementById("loginForm");
 
 
 const loginPhone =
-  document.getElementById(
-    "loginPhone"
-  );
+  document.getElementById("loginPhone");
 
 
 const loginButton =
-  document.getElementById(
-    "loginButton"
-  );
+  document.getElementById("loginButton");
 
 
 const loginStatus =
-  document.getElementById(
-    "loginStatus"
-  );
+  document.getElementById("loginStatus");
 
 
 const signedInPhone =
-  document.getElementById(
-    "signedInPhone"
-  );
+  document.getElementById("signedInPhone");
 
 
 const logoutButton =
-  document.getElementById(
-    "logoutButton"
-  );
+  document.getElementById("logoutButton");
 
-
-
-/* ---------------------------------------------------------
-   READ STORED LOGIN
-   --------------------------------------------------------- */
 
 function getStoredAuth() {
 
-
   try {
-
 
     const raw =
       localStorage.getItem(
         AUTH_STORAGE_KEY
       );
 
-
     if (!raw) {
-      return null;
-    }
 
+      return null;
+
+    }
 
     const parsed =
       JSON.parse(raw);
-
 
     if (
       parsed &&
       parsed.phone_no
     ) {
+
       return parsed;
+
     }
 
-
     return null;
-
 
   }
 
@@ -788,23 +1655,10 @@ function getStoredAuth() {
 }
 
 
-
-/* ---------------------------------------------------------
-   ATTACH THE LOGGED-IN PATIENT TO A REQUEST
-
-   The gateway uses auth_id as the session's user_id, which is
-   what lets Team C join the session back to the patient's
-   phone number and send their WhatsApp appointment
-   confirmation. Without it the booking still works, it just
-   goes out unlinked and silently unconfirmed.
-   --------------------------------------------------------- */
-
 function appendAuthId(formData) {
-
 
   const auth =
     getStoredAuth();
-
 
   if (
     auth &&
@@ -821,35 +1675,24 @@ function appendAuthId(formData) {
 }
 
 
-
-/* ---------------------------------------------------------
-   SHOW LOGIN / SHOW ASSISTANT
-   --------------------------------------------------------- */
-
 function showLogin() {
-
 
   loginView.style.display =
     "block";
-
 
   appView.style.display =
     "none";
 
 }
-
 
 
 function showApp(auth) {
 
-
   signedInPhone.textContent =
     auth.phone_no;
 
-
   loginView.style.display =
     "none";
-
 
   appView.style.display =
     "block";
@@ -857,13 +1700,10 @@ function showApp(auth) {
 }
 
 
-
 function applyAuthState() {
-
 
   const auth =
     getStoredAuth();
-
 
   if (auth) {
 
@@ -880,100 +1720,64 @@ function applyAuthState() {
 }
 
 
-
-/* ---------------------------------------------------------
-   LOGIN SUBMIT
-   --------------------------------------------------------- */
-
 loginForm.addEventListener(
-
   "submit",
-
-  async function (event) {
-
+  async function(event) {
 
     event.preventDefault();
-
 
     const phone =
       loginPhone.value.trim();
 
-
     if (!phone) {
-
 
       loginStatus.textContent =
         "Please enter your phone number.";
 
-
       loginPhone.focus();
-
 
       return;
 
     }
 
-
     loginButton.disabled =
       true;
-
 
     loginStatus.textContent =
       "Checking...";
 
-
     try {
-
 
       const formData =
         new FormData();
-
 
       formData.append(
         "phone_no",
         phone
       );
 
-
       const response =
         await fetch(
-
           "/channels/web/login",
-
           {
-
-            method:
-              "POST",
-
-            body:
-              formData
-
+            method: "POST",
+            body: formData
           }
-
         );
 
-
       if (!response.ok) {
-
 
         let message =
           response.statusText;
 
-
         try {
-
 
           const error =
             await response.json();
 
-
-          /*
-           * FastAPI validation errors put an ARRAY in
-           * detail, which would render as [object Object].
-           */
-
           if (
-            typeof error.detail === "string"
+            typeof error.detail ===
+            "string"
           ) {
 
             message =
@@ -990,11 +1794,9 @@ loginForm.addEventListener(
 
           }
 
-
         }
 
         catch {}
-
 
         throw new Error(
           message
@@ -1002,17 +1804,11 @@ loginForm.addEventListener(
 
       }
 
-
       const data =
         await response.json();
 
-
-      /*
-       * Fresh login starts a fresh conversation.
-       */
-
-      currentSessionId = null;
-
+      currentSessionId =
+        null;
 
       try {
 
@@ -1021,8 +1817,13 @@ loginForm.addEventListener(
           AUTH_STORAGE_KEY,
 
           JSON.stringify({
-            auth_id: data.auth_id,
-            phone_no: data.phone_no,
+
+            auth_id:
+              data.auth_id,
+
+            phone_no:
+              data.phone_no
+
           })
 
         );
@@ -1031,38 +1832,29 @@ loginForm.addEventListener(
 
       catch {}
 
-
       loginStatus.textContent =
         "";
-
 
       loginPhone.value =
         "";
 
-
       showApp(data);
-
 
     }
 
     catch (err) {
-
 
       console.error(
         "[Login] Error:",
         err
       );
 
-
       loginStatus.textContent =
         err.message;
 
-
     }
 
-
     finally {
-
 
       loginButton.disabled =
         false;
@@ -1070,21 +1862,12 @@ loginForm.addEventListener(
     }
 
   }
-
 );
 
 
-
-/* ---------------------------------------------------------
-   LOGOUT
-   --------------------------------------------------------- */
-
 logoutButton.addEventListener(
-
   "click",
-
-  function () {
-
+  function() {
 
     try {
 
@@ -1096,29 +1879,19 @@ logoutButton.addEventListener(
 
     catch {}
 
-
-    /*
-     * Drop the conversation so the next patient
-     * does not inherit it.
-     */
-
-    currentSessionId = null;
-
+    currentSessionId =
+      null;
 
     loginStatus.textContent =
       "";
 
-
     showLogin();
 
   }
-
 );
 
 
-
 applyAuthState();
-
 
 
 /* =========================================================
@@ -1126,21 +1899,15 @@ applyAuthState();
    ========================================================= */
 
 const talkBtn =
-  document.getElementById(
-    "talkBtn"
-  );
+  document.getElementById("talkBtn");
 
 
 const statusEl =
-  document.getElementById(
-    "status"
-  );
+  document.getElementById("status");
 
 
 const logEl =
-  document.getElementById(
-    "log"
-  );
+  document.getElementById("log");
 
 
 let mediaRecorder = null;
@@ -1149,9 +1916,7 @@ let audioChunks = [];
 
 let recordingStartTime = 0;
 
-
 const MIN_RECORDING_MS = 600;
-
 
 
 /* =========================================================
@@ -1159,7 +1924,6 @@ const MIN_RECORDING_MS = 600;
    ========================================================= */
 
 async function startRecording() {
-
 
   if (
     mediaRecorder &&
@@ -1170,45 +1934,34 @@ async function startRecording() {
 
   }
 
-
   try {
-
 
     talkBtn.classList.add(
       "recording"
     );
 
-
     talkBtn.textContent =
       "Starting...";
-
 
     statusEl.textContent =
       "Requesting microphone...";
 
-
     const stream =
       await navigator.mediaDevices
         .getUserMedia({
-
           audio: true
-
         });
-
 
     mediaRecorder =
       new MediaRecorder(
         stream
       );
 
-
     audioChunks = [];
-
 
     mediaRecorder.addEventListener(
       "dataavailable",
       event => {
-
 
         if (
           event.data.size > 0
@@ -1223,11 +1976,9 @@ async function startRecording() {
       }
     );
 
-
     mediaRecorder.addEventListener(
       "stop",
       async () => {
-
 
         stream
           .getTracks()
@@ -1236,19 +1987,14 @@ async function startRecording() {
               track.stop()
           );
 
-
         const audioBlob =
           new Blob(
-
             audioChunks,
-
             {
               type:
                 "audio/webm"
             }
-
           );
-
 
         await sendVoiceToGateway(
           audioBlob
@@ -1257,35 +2003,27 @@ async function startRecording() {
       }
     );
 
-
     mediaRecorder.start();
-
 
     recordingStartTime =
       Date.now();
 
-
     talkBtn.textContent =
       "Release to send";
 
-
     statusEl.textContent =
       "Listening...";
-
 
   }
 
   catch (err) {
 
-
     talkBtn.classList.remove(
       "recording"
     );
 
-
     talkBtn.textContent =
       "Hold to talk";
-
 
     statusEl.textContent =
       "Microphone error: " +
@@ -1296,66 +2034,50 @@ async function startRecording() {
 }
 
 
-
 /* =========================================================
    STOP RECORDING
    ========================================================= */
 
 function stopRecording() {
 
-
   if (
-
     !mediaRecorder ||
-
     mediaRecorder.state !==
       "recording"
-
   ) {
 
     return;
 
   }
 
-
   const elapsed =
     Date.now() -
     recordingStartTime;
-
 
   const remaining =
     MIN_RECORDING_MS -
     elapsed;
 
-
   talkBtn.classList.remove(
     "recording"
   );
 
-
   talkBtn.textContent =
     "Hold to talk";
-
 
   if (
     remaining > 0
   ) {
 
-
     statusEl.textContent =
       "Hold a little longer...";
 
-
     setTimeout(() => {
 
-
       if (
-
         mediaRecorder &&
-
         mediaRecorder.state ===
           "recording"
-
       ) {
 
         mediaRecorder.stop();
@@ -1363,7 +2085,6 @@ function stopRecording() {
       }
 
     }, remaining);
-
 
   }
 
@@ -1376,33 +2097,28 @@ function stopRecording() {
 }
 
 
-
 /* =========================================================
-   SEND VOICE TO GATEWAY
+   SEND VOICE
    ========================================================= */
 
 async function sendVoiceToGateway(
   audioBlob
 ) {
 
-
-  talkBtn.disabled = true;
-
+  talkBtn.disabled =
+    true;
 
   statusEl.textContent =
     "Thinking...";
 
-
   const formData =
     new FormData();
-
 
   formData.append(
     "file",
     audioBlob,
     "input.webm"
   );
-
 
   if (
     currentSessionId
@@ -1415,67 +2131,44 @@ async function sendVoiceToGateway(
 
   }
 
-
-  appendAuthId(formData);
-
+  appendAuthId(
+    formData
+  );
 
   try {
 
-
     const response =
       await fetch(
-
         "/channels/web/chat",
-
         {
-
-          method:
-            "POST",
-
-          body:
-            formData
-
+          method: "POST",
+          body: formData
         }
-
       );
 
-
     if (!response.ok) {
-
 
       let message =
         response.statusText;
 
-
       try {
-
 
         const error =
           await response.json();
-
 
         message =
           error.detail ||
           message;
 
-
       }
 
       catch {}
-
 
       throw new Error(
         message
       );
 
     }
-
-
-
-    /* -----------------------------------------
-       READ RESPONSE HEADERS
-       ----------------------------------------- */
-
 
     const transcript =
       decodeHeader(
@@ -1484,7 +2177,6 @@ async function sendVoiceToGateway(
         )
       );
 
-
     const replyText =
       decodeHeader(
         response.headers.get(
@@ -1492,19 +2184,15 @@ async function sendVoiceToGateway(
         )
       );
 
-
     const language =
       response.headers.get(
         "X-Language"
       ) || "";
 
-
-
     const sessionId =
       response.headers.get(
         "X-Session-Id"
       );
-
 
     if (
       sessionId
@@ -1515,56 +2203,37 @@ async function sendVoiceToGateway(
 
     }
 
-
-
-    /* -----------------------------------------
-       AUDIO
-       ----------------------------------------- */
-
     const audioBlobReply =
       await response.blob();
-
 
     const audioUrl =
       URL.createObjectURL(
         audioBlobReply
       );
 
-
     const audio =
       new Audio(
         audioUrl
       );
 
-
     addVoiceTurn(
-
       transcript,
-
       replyText,
-
       language
-
     );
-
 
     statusEl.textContent =
       "Playing reply...";
 
-
     await audio.play();
 
-
     audio.onended = () => {
-
 
       statusEl.textContent =
         "Ready";
 
-
       talkBtn.disabled =
         false;
-
 
       URL.revokeObjectURL(
         audioUrl
@@ -1572,16 +2241,13 @@ async function sendVoiceToGateway(
 
     };
 
-
   }
 
   catch (err) {
 
-
     statusEl.textContent =
       "Request failed: " +
       err.message;
-
 
     talkBtn.disabled =
       false;
@@ -1589,7 +2255,6 @@ async function sendVoiceToGateway(
   }
 
 }
-
 
 
 /* =========================================================
@@ -1600,13 +2265,11 @@ function decodeHeader(
   value
 ) {
 
-
   if (!value) {
 
     return "";
 
   }
-
 
   try {
 
@@ -1625,116 +2288,91 @@ function decodeHeader(
 }
 
 
-
 /* =========================================================
    ADD VOICE TURN
    ========================================================= */
 
 function addVoiceTurn(
-
   heard,
-
   reply,
-
   lang
-
 ) {
-
 
   const div =
     document.createElement(
       "div"
     );
 
-
   div.className =
     "turn";
-
 
   const heardLabel =
     document.createElement(
       "div"
     );
 
-
   heardLabel.className =
     "label";
-
 
   heardLabel.textContent =
     "You said (" +
     lang +
     ")";
 
-
   const heardDiv =
     document.createElement(
       "div"
     );
 
-
   heardDiv.className =
     "text";
 
-
   heardDiv.textContent =
     heard;
-
 
   const replyLabel =
     document.createElement(
       "div"
     );
 
-
   replyLabel.className =
     "label";
 
-
   replyLabel.textContent =
     "Zenvy";
-
 
   const replyDiv =
     document.createElement(
       "div"
     );
 
-
   replyDiv.className =
     "text";
 
-
   replyDiv.textContent =
     reply;
-
 
   div.appendChild(
     heardLabel
   );
 
-
   div.appendChild(
     heardDiv
   );
-
 
   div.appendChild(
     replyLabel
   );
 
-
   div.appendChild(
     replyDiv
   );
-
 
   logEl.prepend(
     div
   );
 
 }
-
 
 
 /* =========================================================
@@ -1746,25 +2384,19 @@ talkBtn.addEventListener(
   startRecording
 );
 
-
 talkBtn.addEventListener(
   "mouseup",
   stopRecording
 );
 
-
 talkBtn.addEventListener(
   "mouseleave",
   () => {
 
-
     if (
-
       mediaRecorder &&
-
       mediaRecorder.state ===
         "recording"
-
     ) {
 
       stopRecording();
@@ -1775,7 +2407,6 @@ talkBtn.addEventListener(
 );
 
 
-
 /* =========================================================
    TOUCH CONTROLS
    ========================================================= */
@@ -1784,29 +2415,23 @@ talkBtn.addEventListener(
   "touchstart",
   event => {
 
-
     event.preventDefault();
-
 
     startRecording();
 
   }
 );
 
-
 talkBtn.addEventListener(
   "touchend",
   event => {
 
-
     event.preventDefault();
-
 
     stopRecording();
 
   }
 );
-
 
 
 /* =========================================================
@@ -1818,42 +2443,35 @@ const askText =
     "askText"
   );
 
-
 const askLanguage =
   document.getElementById(
     "askLanguage"
   );
-
 
 const askButton =
   document.getElementById(
     "askButton"
   );
 
-
 const askStatus =
   document.getElementById(
     "askStatus"
   );
-
 
 const userQuestion =
   document.getElementById(
     "userQuestion"
   );
 
-
 const userQuestionText =
   document.getElementById(
     "userQuestionText"
   );
 
-
 const assistantAnswer =
   document.getElementById(
     "assistantAnswer"
   );
-
 
 const assistantAnswerText =
   document.getElementById(
@@ -1861,9 +2479,8 @@ const assistantAnswerText =
   );
 
 
-
 /* =========================================================
-   ASK ZENVY BUTTON
+   ASK BUTTON
    ========================================================= */
 
 askButton.addEventListener(
@@ -1872,80 +2489,51 @@ askButton.addEventListener(
 );
 
 
-
-/* =========================================================
-   ASK ZENVY FUNCTION
-   ========================================================= */
-
 async function askZenvy() {
-
 
   const text =
     askText.value.trim();
 
-
   const language =
     askLanguage.value;
 
-
   if (!text) {
-
 
     askStatus.textContent =
       "Please enter your question.";
 
-
     askText.focus();
-
 
     return;
 
   }
 
-
   askButton.disabled =
     true;
-
 
   askStatus.textContent =
     "Zenvy is thinking...";
 
-
   assistantAnswer.style.display =
     "none";
-
 
   userQuestion.style.display =
     "none";
 
-
-
   try {
-
-
-    /* -----------------------------------------
-       CREATE FORM DATA
-       ----------------------------------------- */
 
     const formData =
       new FormData();
-
 
     formData.append(
       "text",
       text
     );
 
-
     formData.append(
       "language",
       language
     );
-
-
-    /*
-     * Send the existing session if available.
-     */
 
     if (
       currentSessionId
@@ -1958,77 +2546,37 @@ async function askZenvy() {
 
     }
 
-
-    appendAuthId(formData);
-
-
-
-    /* -----------------------------------------
-       CALL THE CORRECT ENDPOINT
-       -----------------------------------------
-
-       IMPORTANT:
-
-       This is /channels/web/ask
-
-       NOT:
-
-       /channels/web/tts
-
-       NOT:
-
-       /channels/web/text-chat
-
-    ----------------------------------------- */
-
+    appendAuthId(
+      formData
+    );
 
     const response =
       await fetch(
-
         "/channels/web/ask",
-
         {
-
-          method:
-            "POST",
-
-          body:
-            formData
-
+          method: "POST",
+          body: formData
         }
-
       );
 
-
-
-    /* -----------------------------------------
-       HANDLE HTTP ERROR
-       ----------------------------------------- */
-
     if (!response.ok) {
-
 
       let message =
         response.statusText;
 
-
       try {
-
 
         const error =
           await response.json();
-
 
         message =
           error.detail ||
           error.message ||
           message;
 
-
       }
 
       catch {}
-
 
       throw new Error(
         message
@@ -2036,26 +2584,8 @@ async function askZenvy() {
 
     }
 
-
-
-    /* -----------------------------------------
-       READ JSON RESPONSE
-       ----------------------------------------- */
-
     const data =
       await response.json();
-
-
-    console.log(
-      "[Ask Zenvy] Response:",
-      data
-    );
-
-
-
-    /* -----------------------------------------
-       CHECK SUCCESS
-       ----------------------------------------- */
 
     if (
       data.success === false
@@ -2068,15 +2598,8 @@ async function askZenvy() {
 
     }
 
-
-
-    /* -----------------------------------------
-       GET ACTUAL ASSISTANT REPLY
-       ----------------------------------------- */
-
     const reply =
       data.reply || "";
-
 
     if (!reply) {
 
@@ -2085,12 +2608,6 @@ async function askZenvy() {
       );
 
     }
-
-
-
-    /* -----------------------------------------
-       UPDATE SESSION
-       ----------------------------------------- */
 
     if (
       data.session_id
@@ -2101,51 +2618,32 @@ async function askZenvy() {
 
     }
 
-
-
-    /* -----------------------------------------
-       SHOW QUESTION
-       ----------------------------------------- */
-
     userQuestionText.textContent =
       data.input || text;
-
 
     userQuestion.style.display =
       "block";
 
-
     askText.value =
       "";
-
-
-
-    /* -----------------------------------------
-       SHOW ZENVY ANSWER
-       ----------------------------------------- */
 
     assistantAnswerText.textContent =
       reply;
 
-
     assistantAnswer.style.display =
       "block";
 
-
     askStatus.textContent =
       "Zenvy answered ✓";
-
 
   }
 
   catch (err) {
 
-
     console.error(
       "[Ask Zenvy] Error:",
       err
     );
-
 
     askStatus.textContent =
       "Error: " +
@@ -2153,9 +2651,7 @@ async function askZenvy() {
 
   }
 
-
   finally {
-
 
     askButton.disabled =
       false;
@@ -2165,34 +2661,20 @@ async function askZenvy() {
 }
 
 
-
 /* =========================================================
-   ENTER KEY SUPPORT
+   ENTER KEY
    ========================================================= */
 
 askText.addEventListener(
   "keydown",
   event => {
 
-
-    /*
-     * Ctrl + Enter
-     * or
-     * Enter without Shift
-     */
-
     if (
-
-      event.key ===
-        "Enter" &&
-
+      event.key === "Enter" &&
       !event.shiftKey
-
     ) {
 
-
       event.preventDefault();
-
 
       askZenvy();
 
@@ -2200,7 +2682,6 @@ askText.addEventListener(
 
   }
 );
-
 
 </script>
 
