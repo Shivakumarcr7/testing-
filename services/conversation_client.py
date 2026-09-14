@@ -1,34 +1,49 @@
 """
-DEMO CONVERSATION/APPOINTMENT BACKEND -- TEMPORARY.
+HTTP client for Team C's Conversation Service (sessions + turns).
 
-This client normally wraps Team C's Conversation Service (sessions, turns,
-appointments) over REST, backed by Postgres/Supabase. For this standalone
-deployment/testing phase we are NOT depending on Team C's database/backend,
-so every function below is backed by services.demo_store instead: plain
-in-memory dicts/lists, no database, no persistence across restarts.
+Team A never talks to Postgres/Supabase directly -- Team C owns the
+schema and exposes it over REST. This wraps that API the same way
+services/llm/client.py wraps Sarvam's API: plain requests calls, no
+ORM, no DB driver here at all.
 
-Function signatures and return shapes are kept identical to the original
-Team C-backed client, so services/gateway/main.py and
-services/orchestrator/state_machine.py did not need to change. To restore
-the real Team C integration later, swap these bodies back to HTTP calls
-against TEAM_C_BASE_URL (see git history for the original implementation).
+Team C's service must be running separately (their own repo/venv),
+default at http://127.0.0.1:8002 in local dev -- see
+TEAM_C_BASE_URL below. Configure via env var if it moves.
 """
-from services.demo_store import (
-    demo_create_session,
-    demo_add_turn,
-    demo_get_turns,
-    demo_get_session,
-    demo_create_appointment,
-)
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+import requests
+
+TEAM_C_BASE_URL = os.getenv("TEAM_C_BASE_URL", "http://127.0.0.1:8002")
+
+_SESSIONS_URL = f"{TEAM_C_BASE_URL}/api/v1/sessions"
 
 
 def create_session(user_id: str, channel: str, language: str, uhid: str | None = None) -> dict:
     """
-    DEMO -- TEMPORARY. Create a new in-memory conversation session.
-    channel must be 'phone', 'sms', or 'web'.
+    Create a new conversation session. channel must be 'phone', 'sms', or 'web'.
     Returns the full session dict, including the generated 'session_id'.
+    Raises requests.exceptions.RequestException if Team C's service is
+    unreachable or rejects the request -- callers should decide whether
+    to degrade gracefully (log locally, continue without persistence)
+    or fail hard, depending on context.
     """
-    return demo_create_session(user_id, channel, language, uhid)
+    response = requests.post(
+        _SESSIONS_URL,
+        json={
+            "user_id": user_id,
+            "channel": channel,
+            "language": language,
+            "uhid": uhid,
+        },
+        timeout=10,
+    )
+    response.raise_for_status()
+    return response.json()
 
 
 def add_turn(
@@ -40,8 +55,8 @@ def add_turn(
     response_text: str | None = None,
 ) -> dict:
     """
-    DEMO -- TEMPORARY. Log one conversation turn in memory against an
-    existing session. speaker must be 'user', 'assistant', or 'system'.
+    Log one conversation turn against an existing session.
+    speaker must be 'user', 'assistant', or 'system'.
 
     Convention used by the gateway: each exchange is logged as TWO
     turns -- one speaker='user' turn (content=input_text=what the
@@ -49,25 +64,36 @@ def add_turn(
     response_text=what the bot replied) -- rather than packing both
     directions into a single turn row.
     """
-    return demo_add_turn(
-        session_id,
-        speaker,
-        content,
-        language,
-        input_text=input_text,
-        response_text=response_text,
+    response = requests.post(
+        f"{_SESSIONS_URL}/{session_id}/turns",
+        json={
+            "speaker": speaker,
+            "content": content,
+            "language": language,
+            "input_text": input_text,
+            "response_text": response_text,
+        },
+        timeout=10,
     )
+    response.raise_for_status()
+    return response.json()
 
 
 def get_turns(session_id: str) -> list[dict]:
-    """DEMO -- TEMPORARY. Fetch all in-memory turns for a session, in order."""
-    return demo_get_turns(session_id)
+    """Fetch all turns for a session, in order."""
+    response = requests.get(f"{_SESSIONS_URL}/{session_id}/turns", timeout=10)
+    response.raise_for_status()
+    return response.json()
 
 
 def get_session(session_id: str) -> dict:
-    """DEMO -- TEMPORARY. Fetch an in-memory session's metadata (does not
-    include turns)."""
-    return demo_get_session(session_id)
+    """Fetch a session's metadata (does not include turns)."""
+    response = requests.get(f"{_SESSIONS_URL}/{session_id}", timeout=10)
+    response.raise_for_status()
+    return response.json()
+
+
+_APPOINTMENTS_URL = f"{TEAM_C_BASE_URL}/api/v1/appointments"
 
 
 def create_appointment(
@@ -79,16 +105,22 @@ def create_appointment(
     booking_info: dict | None = None,
 ) -> dict:
     """
-    DEMO -- TEMPORARY. Store an appointment in memory instead of Team C's
-    ai_appointments table. appointment_datetime must be an ISO 8601 string
-    (e.g. '2026-08-28T10:30:00+05:30'). patient_uhid and doctor_name are
-    required.
+    Create an appointment against Team C's ai_appointments table.
+    appointment_datetime must be an ISO 8601 string (e.g.
+    '2026-08-28T10:30:00'). patient_uhid and doctor_name are required
+    and cannot be empty per Team C's schema.
     """
-    return demo_create_appointment(
-        session_id=session_id,
-        patient_uhid=patient_uhid,
-        doctor_name=doctor_name,
-        appointment_datetime=appointment_datetime,
-        status=status,
-        booking_info=booking_info,
+    response = requests.post(
+        _APPOINTMENTS_URL,
+        json={
+            "session_id": session_id,
+            "patient_uhid": patient_uhid,
+            "doctor_name": doctor_name,
+            "appointment_datetime": appointment_datetime,
+            "status": status,
+            "booking_info": booking_info,
+        },
+        timeout=10,
     )
+    response.raise_for_status()
+    return response.json()

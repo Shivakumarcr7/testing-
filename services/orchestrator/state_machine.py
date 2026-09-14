@@ -4,49 +4,37 @@ Appointment booking state machine.
 States:
 ASK_DOCTOR -> ASK_DATE -> ASK_TIME -> CONFIRM -> COMPLETED
 
-DEMO / TEMPORARY -- IN-MEMORY STATE:
-
-Appointment conversation state is held in a plain Python dict in process
-memory, keyed by session_id. This is intentional for the standalone demo:
-
-    - No Redis, no external cache, no extra service to run.
-    - State does NOT survive a server restart -- an in-progress booking
-      conversation is lost if the process restarts.
-    - State is NOT shared across multiple gateway worker processes -- run
-      this service as a single worker (the Render/uvicorn default) for the
-      demo, since a second worker would have its own empty dict.
-    - Not safe for concurrent production traffic at scale.
-
-An unfinished booking conversation is expired after SESSION_TTL seconds,
-the same lifetime Redis's SETEX previously enforced, just checked on read
-instead of relying on Redis's own expiry.
-
-To restore Redis-backed state later (e.g. for multi-worker deployments),
-reintroduce a redis.Redis.from_url(REDIS_URL) client and swap the three
-helpers below back to GET/SETEX/DELETE calls (see git history).
+Appointment conversation state is stored in Redis per session_id so that
+it survives application/server restarts and can be shared across
+multiple gateway workers.
 """
 
+import json
 import sys
-import time
 from pathlib import Path
+
+import redis
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
+from services.config import REDIS_URL
 from services.llm.client import generate_reply
 from services.conversation_client import create_appointment
 from services.orchestrator.entity_extraction import extract_booking_fields
 from services.orchestrator.templates import render_template
 
 
-# DEMO / TEMPORARY in-memory appointment-conversation store.
-# session_id -> {"state": dict, "expires_at": float (epoch seconds)}
-_session_store: dict[str, dict] = {}
+# Redis connection
+redis_client = redis.Redis.from_url(
+    REDIS_URL,
+    decode_responses=True,
+)
 
 # Keep an unfinished appointment conversation for 1 hour.
 SESSION_TTL = 3600
 
 # The hospital runs on IST. Appointment times a patient gives are in IST, and
-# must be sent with this offset attached -- see _complete_booking.
+# must be sent to Team C with this offset attached -- see _confirm_booking.
 IST_UTC_OFFSET = "+05:30"
 
 
@@ -68,44 +56,45 @@ SLOT_TO_ASK_STATE = {
 PLACEHOLDER_PATIENT_UHID = "UHID-DEMO-0001"
 
 
+def _session_key(session_id: str) -> str:
+    """
+    Generate the Redis key for an appointment conversation.
+    """
+    return f"appointment_session:{session_id}"
+
+
 def _get_session_state(session_id: str) -> dict | None:
     """
-    DEMO / TEMPORARY. Get appointment state from the in-memory store.
+    Get appointment state from Redis.
 
-    Returns None if there is no active appointment conversation, or if the
-    stored one has expired (SESSION_TTL seconds since it was last written).
+    Returns None if there is no active appointment conversation.
     """
-    entry = _session_store.get(session_id)
+    data = redis_client.get(_session_key(session_id))
 
-    if entry is None:
+    if data is None:
         return None
 
-    if entry["expires_at"] < time.time():
-        _session_store.pop(session_id, None)
-        return None
-
-    return entry["state"]
+    return json.loads(data)
 
 
 def _set_session_state(session_id: str, state: dict) -> None:
     """
-    DEMO / TEMPORARY. Save appointment state to the in-memory store.
+    Save appointment state to Redis.
 
-    The entry is treated as expired -- and skipped on the next read --
-    after SESSION_TTL seconds. It is NOT persisted anywhere else, so a
-    server restart loses all in-progress bookings.
+    The state automatically expires after SESSION_TTL seconds.
     """
-    _session_store[session_id] = {
-        "state": state,
-        "expires_at": time.time() + SESSION_TTL,
-    }
+    redis_client.setex(
+        _session_key(session_id),
+        SESSION_TTL,
+        json.dumps(state),
+    )
 
 
 def _delete_session_state(session_id: str) -> None:
     """
-    DEMO / TEMPORARY. Delete appointment state from the in-memory store.
+    Delete appointment state from Redis.
     """
-    _session_store.pop(session_id, None)
+    redis_client.delete(_session_key(session_id))
 
 
 def _first_missing_slot(slots: dict) -> str | None:
@@ -124,11 +113,10 @@ def handle_turn(session_id: str, short_lang: str, user_text: str) -> str:
     Route one conversation turn through the appointment state machine
     or normal hospital-receptionist Q&A.
 
-    Appointment state is held in the in-memory demo store, keyed by
-    session_id (see the module docstring).
+    Appointment state is persisted in Redis using session_id.
     """
 
-    # Get the current appointment state from the in-memory demo store.
+    # Get the current appointment state from Redis.
     existing = _get_session_state(session_id)
 
     # Extract appointment information from the current message.
@@ -171,7 +159,7 @@ def handle_turn(session_id: str, short_lang: str, user_text: str) -> str:
 
         print(f"[Orchestrator] New state: {state}")
 
-        # Save the new booking state in the in-memory demo store.
+        # Save the new booking state in Redis.
         _set_session_state(
             session_id,
             {
@@ -240,7 +228,7 @@ def handle_turn(session_id: str, short_lang: str, user_text: str) -> str:
     # Next turn:
     # "Tomorrow at 10:30"
     #
-    # The in-memory demo store keeps the doctor name and we add date/time.
+    # Redis keeps the doctor name and we add date/time.
 
     for slot_name in SLOT_ORDER:
 
@@ -265,7 +253,7 @@ def handle_turn(session_id: str, short_lang: str, user_text: str) -> str:
         f"{existing['state']}"
     )
 
-    # Save updated slots/state back to the in-memory demo store.
+    # Save updated slots/state back to Redis.
     _set_session_state(
         session_id,
         existing,
@@ -282,8 +270,7 @@ def _render_current_state(
     short_lang: str,
 ) -> str:
     """
-    Read the current state from the in-memory demo store and generate the
-    appropriate reply.
+    Read the current state from Redis and generate the appropriate reply.
     """
 
     entry = _get_session_state(session_id)
@@ -324,9 +311,8 @@ def _complete_booking(
     short_lang: str,
 ) -> str:
     """
-    Create the appointment (in the demo in-memory store -- see
-    services/conversation_client.py) and clear the temporary in-memory
-    booking-conversation state.
+    Create the appointment in Supabase and clear the temporary
+    Redis conversation state.
     """
 
     entry = _get_session_state(session_id)
@@ -388,7 +374,7 @@ def _complete_booking(
         time=slots["appointment_time"],
     )
 
-    # Booking is finished, so remove the temporary in-memory state.
+    # Booking is finished, so remove temporary Redis state.
     _delete_session_state(session_id)
 
     print("[Orchestrator] Appointment successfully created")
