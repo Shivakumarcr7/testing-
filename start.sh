@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 
 echo "Starting Zenvy STT on port 8001..."
 python -m uvicorn services.stt.main:app --host 0.0.0.0 --port 8001 &
