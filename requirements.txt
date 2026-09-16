@@ -5,4 +5,3 @@ python-dotenv
 python-multipart
 pytest
 httpx
-redis
