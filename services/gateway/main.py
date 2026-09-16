@@ -1,41 +1,41 @@
-"""
+﻿"""
 Zenvy Channel Gateway - port 8000
 
 VOICE PIPELINE:
 
 Browser
-   ↓
+   â†“
 WebM/Opus
-   ↓
+   â†“
 FFmpeg
-   ↓
+   â†“
 WAV
-   ↓
+   â†“
 STT :8001
-   ↓
+   â†“
 Transcript
-   ↓
+   â†“
 Appointment Orchestrator / LLM
-   ↓
+   â†“
 ACTUAL ASSISTANT REPLY
-   ↓
+   â†“
 TTS :8005
-   ↓
+   â†“
 WAV
-   ↓
+   â†“
 Browser
 
 
 TEXT PIPELINE:
 
 Browser Text
-   ↓
+   â†“
 Appointment Orchestrator / LLM
-   ↓
+   â†“
 ACTUAL ASSISTANT REPLY
-   ↓
+   â†“
 TTS :8005
-   ↓
+   â†“
 Browser
 """
 
@@ -145,9 +145,7 @@ async def serve_ui():
     Serve the Zenvy voice assistant UI.
     """
 
-    return FileResponse(
-        STATIC_DIR / "index.html"
-    )
+    return FileResponse(STATIC_DIR / "index.html", media_type="text/html; charset=utf-8")
 
 
 @app.get("/health")
@@ -424,11 +422,11 @@ def _call_tts(
 
         CORRECT:
         user text
-             ↓
+             â†“
         orchestrator / LLM
-             ↓
+             â†“
         assistant reply
-             ↓
+             â†“
         TTS
     """
 
@@ -587,7 +585,7 @@ def _get_or_create_session(
 
 
 # =========================================================
-# TEXT → AI REPLY → TTS
+# TEXT â†’ AI REPLY â†’ TTS
 # =========================================================
 
 @app.post("/channels/web/tts")
@@ -613,21 +611,21 @@ async def web_tts(
         User:
         "I wanted to book an appointment at 3 PM"
 
-             ↓
+             â†“
 
         Orchestrator
 
-             ↓
+             â†“
 
         Assistant:
         "Sure, I can help with that.
          Which department or doctor would you like to see?"
 
-             ↓
+             â†“
 
         TTS
 
-             ↓
+             â†“
 
         Spoken assistant response
     """
@@ -786,7 +784,7 @@ async def web_tts(
             )
 
     # =====================================================
-    # 5. ASSISTANT REPLY → TTS
+    # 5. ASSISTANT REPLY â†’ TTS
     # =====================================================
 
     print(
@@ -854,15 +852,15 @@ async def web_chat(
     Complete voice assistant pipeline.
 
     Browser
-       ↓
+       â†“
     STT
-       ↓
+       â†“
     Orchestrator
-       ↓
+       â†“
     ACTUAL ASSISTANT REPLY
-       ↓
+       â†“
     TTS
-       ↓
+       â†“
     Browser
     """
 
@@ -902,7 +900,7 @@ async def web_chat(
     )
 
     # =====================================================
-    # 2. WEBM → WAV
+    # 2. WEBM â†’ WAV
     # =====================================================
 
     suffix = (
@@ -1144,7 +1142,7 @@ async def web_chat(
             )
 
     # =====================================================
-    # 9. ASSISTANT REPLY → TTS
+    # 9. ASSISTANT REPLY â†’ TTS
     # =====================================================
 
     print(
@@ -1210,9 +1208,9 @@ async def ask_zenvy(
     Text chat endpoint.
 
     User text
-        ↓
+        â†“
     Orchestrator / LLM
-        ↓
+        â†“
     Assistant reply
     """
 
